@@ -1,0 +1,6 @@
+[submodule "lib/lcm"]
+	path = lib/lcm
+	url = https://github.com/lcm-proj/lcm.git
+[submodule "lib/BlackLib"]
+	path = lib/BlackLib
+	url = https://github.com/yigityuce/BlackLib

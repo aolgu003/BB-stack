@@ -1,0 +1,5 @@
+if ( BUILD-AHRS )
+  add_subdirectory( lib/lcm )
+  add_library(MadgwickAHRS/MadgwickAHRS.c)
+  include(MadgwickAHRS/MadgwickAHRS.h)
+endif()
