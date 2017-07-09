@@ -30,7 +30,7 @@ after_success:
 
 notifications:
   email:
-    - kosrok97@gmail.com
+    - aolgu003@ucr.edu
 
 env:
   global:
