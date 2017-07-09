@@ -1,9 +1,9 @@
 add_subdirectory(sensor)
 
 add_test(
-  AllTests sensor
+  NAME AllTests COMMAND imuTest
 )
 
 add_test(
-  AHRS imuTest
+  NAME AHRS COMMAND imuTest
 )
