@@ -1,10 +1,25 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(BB-Stack)
+add_compile_options(-std=c++11)
 
-include_directories( include include/imu)
 add_subdirectory(lib)
 
-if ( BUILD-TESTS )
+
+if ( BUILD-BLACKLIB-TESTS )
+  include(cmake/DownloadProject.cmake)
+  download_project(PROJ     BlackLib
+    GIT_REPOSITORY          https://github.com/aolgu003/BlackLib.git
+    GIT_TAG                 master
+    ${UPDATE_DISCONNECTED_IF_AVAILABLE}
+    )
+
+  add_subdirectory(${BlackLib_SOURCE_DIR}/v3_0 ${googletest_BINARY_DIR} )
+
+  add_subdirectory( src )
+endif()
+
+
+if ( BUILD-UNIT-TESTS OR BUILD-AHRS-UT)
   include( CTest )
 
   if (CMAKE_VERSION VERSION_LESS 3.2)
@@ -23,7 +38,6 @@ if ( BUILD-TESTS )
   # Prevent GoogleTest from overriding our compiler/linker options
   # when building with Visual Studio
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-  add_compile_options(-std=c++11)
   add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
 
   # When using CMake 2.8.11 or later, header path dependencies
@@ -39,6 +53,4 @@ if ( BUILD-TESTS )
   include_directories(${GTEST_INCLUDE_DIRS})
 
   add_subdirectory( test )
-  add_subdirectory( lib/lcm )
-  add_subdirectory( src )
 endif()

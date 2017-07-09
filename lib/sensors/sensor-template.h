@@ -7,9 +7,6 @@ namespace Sensor {
   {
   public:
     sensor() {}
-
-    template<class sensorType>;
-
   };
 }
 
