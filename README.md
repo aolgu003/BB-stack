@@ -1,6 +1,4 @@
-[![Codecov logo][codecov-image]][codecov-link]
-
-[![Build Status][travis-badge]][travis-link]
+[![Build Status](https://travis-ci.org/aolgu003/BB-stack.svg?branch=master)](https://travis-ci.org/aolgu003/BB-stack)
 
 
 # BB-stack
