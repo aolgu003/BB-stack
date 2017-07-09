@@ -20,6 +20,13 @@ endif()
 
 
 if ( BUILD-UNIT-TESTS OR BUILD-AHRS-UT)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+      include(cmake/CodeCoverage.cmake)
+      setup_target_for_coverage(${PROJECT_NAME}_coverage tests coverage)
+  endif()
+
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage")
+
   include( CTest )
 
   if (CMAKE_VERSION VERSION_LESS 3.2)
