@@ -1,4 +1,3 @@
-[![Travis CI logo][travis-image]][travis-link]
 [![Codecov logo][codecov-image]][codecov-link]
 
 [![Build Status][travis-badge]][travis-link]
