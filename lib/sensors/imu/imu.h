@@ -1,19 +1,17 @@
 #ifndef IMU_H
 #define IMU_H
-#include "senormessages.h"
-#include "sensor-template.h"
-#include "MadgwickAHRS.h"
+#include <iostream>
 
 namespace sensor
 {
-  class IMU
+  class AHRS
   {
   public:
-    IMU() {}
-    imuData readAHRS();
-  protected:
-    virtual imuData readIMU()=0;
-    imuData computeAHRSUpdate(imuData input);
+    AHRS() {}
+    AHRS(AHRS* imu) {}
+
+  public:
+    static AHRS* select_imu(std::string imuSelection);
   };
 }
 
