@@ -13,9 +13,9 @@ addons:
     apt:
         sources:
             - ubuntu-toolchain-r-test
+            - libeigen3-dev
         packages:
             - lcov
-            - libeigen3-dev
 
 branches:
   only:
@@ -25,12 +25,12 @@ script: ./run_build.sh
 
 after_success:
     # Creating report
-  #- cd ${TRAVIS_BUILD_DIR}
-  #- lcov --directory . --capture --output-file coverage.info # capture coverage info
-  #- lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
-  #- lcov --list coverage.info #debug info
+  - cd ${TRAVIS_BUILD_DIR}
+  - lcov --directory . --capture --output-file coverage.info # capture coverage info
+  - lcov --remove coverage.info '/usr/*' --output-file coverage.info # filter out system
+  - lcov --list coverage.info #debug info
   # Uploading report to CodeCov
-  - codecov --file coverage/lcov.info --disable search
+  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
 
 
 notifications:
