@@ -12,7 +12,7 @@ namespace sensor {
     verifyIMUConnected();
 
     // Calibrate gyro
-    calibrationSetup();
+    //calibrationSetup();
   }
 
   imuData MPU9250::readData()
@@ -40,16 +40,6 @@ namespace sensor {
       std::cerr << err.what() << std::endl;
       hwInterface_->close();
       throw err;
-    }
-  }
-
-  void MPU9250::calibrationSetup()
-  {
-    try {
-      hwInterface_->writeByte(mpu9150::PWR_MGMT_1, 0x01);
-      hwInterface_->writeByte(mpu9150::PWR_MGMT_2, 0x00);
-
-      hwInterface_->
     }
   }
 }
