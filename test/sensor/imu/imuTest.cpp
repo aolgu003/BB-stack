@@ -3,9 +3,8 @@
 void imuTest::SetUp(){}
 void imuTest::TearDown(){}
 
-TEST_F(imuTest, constructorTest)
+TEST_F(imuTest, MPU9250_TEST)
 {
-  sensor::AHRS myAHRS(sensor::AHRS::select_imu("MPU9250") );
-
-  EXPECT_NO_THROW(sensor::AHRS myAHRS(sensor::AHRS::select_imu("MPU9250") ););
+  sensor::HALMock hwMock;
+  sensor::MPU9250 myIMU(&hwMock);
 }

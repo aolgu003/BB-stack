@@ -6,6 +6,13 @@ namespace sensor
 {
 struct imuData
 {
+  float w[3];
+  float a[3];
+  float m[3];
+};
+
+struct ahrsData
+{
   float q[4];
   float euler[3]; // 0->y, 1->p, 2->r
   float w[3];

@@ -1,5 +1,5 @@
 #ifndef MPU9150REGISTERS_H
- MPU9150REGISTERS_H
+#define MPU9150REGISTERS_H
 namespace sensor
 {
   namespace mpu9150
@@ -15,7 +15,7 @@ namespace sensor
        WHO_AM_I_AK8975A = 0x00, // should return 0x48
        INFO             = 0x01,
        AK8975A_ST1      = 0x02,  // data ready status bit 0
-       AK8975A_ADDRESS  = 0x0C,
+       AK8975A_ADDRESS = 0x0C, //  Address of magnetometer
        AK8975A_XOUT_L	 = 0x03,  // data
        AK8975A_XOUT_H	 = 0x04,
        AK8975A_YOUT_L	 = 0x05,
@@ -146,8 +146,7 @@ namespace sensor
 
        MPU9150_ADDRESS_AD0_0 = 0x69,  // Device address when ADO = 1
 
-       MPU9150_ADDRESS_AD0_1 = 0x68,  // Device address when ADO = 0
-       AK8975A_ADDRESS = 0x0C //  Address of magnetometer
+       MPU9150_ADDRESS_AD0_1 = 0x68  // Device address when ADO = 0
     };
   }
 }

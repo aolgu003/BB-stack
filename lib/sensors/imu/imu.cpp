@@ -3,7 +3,7 @@
 namespace sensor
 {
 
-  AHRS *AHRS::select_imu(std::string imuSelection)
+  IMU *IMU::select_imu(imuSensors imuSelection, hwInterface hwSelection)
   {
     return NULL;
   }

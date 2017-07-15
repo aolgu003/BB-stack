@@ -1,15 +1,15 @@
 #ifndef MPU9150_H
 #define MPU9150_H
-#include "imu.h"
-#include "mpu9150-registers.h"
+#include "imu/imu.h"
+#include "mpu9250-registers.h"
 
 namespace sensor
 {
-
-  class MPU9150: IMU
+  class MPU9250: public IMU
   {
-    MPU9150();
-    imuData readIMU();
+  public:
+    MPU9250( HALInterface* hwSelection );
+    imuData readData();
 
   private:
     enum aRes
@@ -26,9 +26,8 @@ namespace sensor
       gRes10g
     };
 
-    float calculateAres(aRes sf);
-    float calculateGres(gRes sf);
-  };
+    HALInterface* hwInterface_;
+  }; 
 }
 
 #endif // MPU9150_H

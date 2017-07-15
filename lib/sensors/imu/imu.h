@@ -1,17 +1,38 @@
 #ifndef IMU_H
 #define IMU_H
 #include <iostream>
+#include "HALInterface.h"
+#include "sensor-messages.h"
 
 namespace sensor
 {
-  class AHRS
+  /**
+   * IMU class is the abstraction layer for each of the different types of imu sensors. The
+   * IMU is selected by the select_imu() member function.
+   */
+  class IMU
   {
   public:
-    AHRS() {}
-    AHRS(AHRS* imu) {}
+    IMU() {}
 
   public:
-    static AHRS* select_imu(std::string imuSelection);
+
+    enum imuSensors {
+      mpu9250
+    };
+
+    /**
+     * @brief readData
+     * @return imuData
+     */
+    virtual imuData readData()=0;
+
+    /**
+     * @brief select_imu
+     * @param imuSelection
+     * @return
+     */
+    static IMU* select_imu( imuSensors imuSelection, hwInterface hwSelection);
   };
 }
 
