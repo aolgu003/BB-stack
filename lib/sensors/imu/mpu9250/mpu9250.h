@@ -12,20 +12,8 @@ namespace sensor
     imuData readData();
 
   private:
-    enum aRes
-    {
-      aRes2g,
-      aRes4g,
-      aRes10g
-    };
-
-    enum gRes
-    {
-      gRes2g,
-      gRes4g,
-      gRes10g
-    };
-
+    void verifyIMUConnected();
+    void calibrationSetup();
     HALInterface* hwInterface_;
   }; 
 }

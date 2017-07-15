@@ -9,8 +9,8 @@ namespace sensor {
     HALInterface(){}
 
     virtual ~HALInterface(){}
-
-    virtual void open(unsigned int openMode)=0;
+    //Auto open in nonblock with readWrite permisions
+    virtual void open()=0;
     virtual void close()=0;
 
     virtual uint8_t readI2CByte(uint8_t registerAddr)=0;
@@ -24,6 +24,7 @@ namespace sensor {
     BlackLib,
     mock
   };
+
 }
 
 #endif // BLACKLIBINTERFACE_H
