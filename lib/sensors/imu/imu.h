@@ -1,6 +1,8 @@
 #ifndef IMU_H
 #define IMU_H
 #include <iostream>
+#include <unistd.h>
+#include <stdexcept>
 #include "HALInterface.h"
 #include "sensor-messages.h"
 

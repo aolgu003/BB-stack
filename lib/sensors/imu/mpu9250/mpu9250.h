@@ -14,6 +14,7 @@ namespace sensor
   private:
     void verifyIMUConnected();
     void calibrationSetup();
+    void collectCalibrationData();
     HALInterface* hwInterface_;
   }; 
 }
