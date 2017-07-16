@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(BB-Stack)
-add_compile_options(-std=c++11)
+add_compile_options(-std=c++11 -fprofile-arcs)
 
 add_subdirectory(lib)
 
@@ -26,6 +26,7 @@ if ( BUILD-UNIT-TESTS OR BUILD-AHRS-UT)
   endif()
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -pthread -g -O0 -fprofile-arcs -ftest-coverage")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
 
   include( CTest )
 
