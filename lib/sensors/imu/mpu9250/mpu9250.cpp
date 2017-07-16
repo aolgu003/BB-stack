@@ -12,7 +12,8 @@ namespace sensor {
     verifyIMUConnected();
 
     // Calibrate gyro
-    //calibrationSetup();
+    calibrationSetup();
+    collectCalibrationData();
   }
 
   imuData MPU9250::readData()
@@ -75,55 +76,26 @@ namespace sensor {
     }
   }
 
-  /*void MPU9250::collectCalibrationData()
+  void MPU9250::collectCalibrationData()
   {
     // Configure FIFO to capture gyro data for bias calculation
-    rc_i2c_write_byte(IMU_BUS, USER_CTRL, 0x40);   // Enable FIFO
+    hwInterface_->writeByte(mpu9150::USER_CTRL, 0x40);   // Enable FIFO
+
     // Enable gyro sensors for FIFO (max size 512 bytes in MPU-9250)
-    c = FIFO_GYRO_X_EN|FIFO_GYRO_Y_EN|FIFO_GYRO_Z_EN;
-    rc_i2c_write_byte(IMU_BUS, FIFO_EN, c);
+    uint8_t c = mpu9150::FIFO_EN_GYROX|mpu9150::FIFO_EN_GYROY|mpu9150::FIFO_EN_GYROZ;
+    hwInterface_->writeByte(mpu9150::FIFO_EN, c);
     // 6 bytes per sample. 200hz. wait 0.4 seconds
-    rc_usleep(400000);
+    usleep(400000);
 
     // At end of sample accumulation, turn off FIFO sensor read
-    rc_i2c_write_byte(IMU_BUS, FIFO_EN, 0x00);
+    hwInterface_->writeByte(mpu9150::FIFO_EN, 0x00);
+
     // read FIFO sample count and log number of samples
-    rc_i2c_read_bytes(IMU_BUS, FIFO_COUNTH, 2, &data[0]);
+    uint8_t data[6] = {0,0,0,0,0,0};
+    hwInterface_->readI2CBlock( mpu9150::FIFO_COUNTH, &data[0], 2 );
     int16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
     int samples = fifo_count/6;
-
-    int16_t x,y,z;
-      rc_vector_t vx = rc_empty_vector();
-      rc_vector_t vy = rc_empty_vector();
-      rc_vector_t vz = rc_empty_vector();
-      rc_alloc_vector(&vx,samples);
-      rc_alloc_vector(&vy,samples);
-      rc_alloc_vector(&vz,samples);
-      float dev_x, dev_y, dev_z;
-      gyro_sum[0] = 0;
-      gyro_sum[1] = 0;
-      gyro_sum[2] = 0;
-      for (i=0; i<samples; i++) {
-        // read data for averaging
-        if(rc_i2c_read_bytes(IMU_BUS, FIFO_R_W, 6, data)<0){
-          fprintf(stderr,"ERROR: failed to read FIFO\n");
-          return -1;
-        }
-        x = (int16_t)(((int16_t)data[0] << 8) | data[1]) ;
-        y = (int16_t)(((int16_t)data[2] << 8) | data[3]) ;
-        z = (int16_t)(((int16_t)data[4] << 8) | data[5]) ;
-        gyro_sum[0]  += (int32_t) x;
-        gyro_sum[1]  += (int32_t) y;
-        gyro_sum[2]  += (int32_t) z;
-        vx.d[i] = (float)x;
-        vy.d[i] = (float)y;
-        vz.d[i] = (float)z;
-      }
-
-      dev_x = rc_std_dev(vx);
-      dev_y = rc_std_dev(vy);
-      dev_z = rc_std_dev(vz);
-  }*/
+  }
 }
 
 

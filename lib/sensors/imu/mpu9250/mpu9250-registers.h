@@ -62,6 +62,10 @@ namespace sensor
        ZMOT_THR        = 0x21,  // Zero-motion detection threshold bits [7:0]
        ZRMOT_DUR       = 0x22,  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
        FIFO_EN         = 0x23,
+       FIFO_EN_GYROX   = 0x40,
+       FIFO_EN_GYROY   = 0x20,
+       FIFO_EN_GYROZ   = 0x10,
+       FIFO_EN_ACCEL   = 0x08,
        I2C_MST_CTRL    = 0x24,
        I2C_SLV0_ADDR   = 0x25,
        I2C_SLV0_REG    = 0x26,
