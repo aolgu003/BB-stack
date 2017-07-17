@@ -5,7 +5,7 @@ namespace sensor
 
   IMU *IMU::select_imu(imuSensors imuSelection, hwInterface hwSelection)
   {
-    return NULL;
+    HALInterface* hwInterfaceSelection;
   }
 
 }

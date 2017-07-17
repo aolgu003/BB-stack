@@ -23,8 +23,23 @@ TEST_F(imuTest, MPU9250_START_UP_SUCCESS_TEST)
   EXPECT_CALL(hwMock, writeByte(sensor::mpu9150::FIFO_EN, 0x70))
       .Times(1);
 
-  uint8_t data[6] = {0x01,0};
+  uint8_t data[6] = {0x00,0x06};
   EXPECT_CALL(hwMock, readI2CBlock(sensor::mpu9150::FIFO_COUNTH, NotNull(), 2))
+    .Times(1)
+    .WillOnce(SetArrayArgument<1>(data, data+6));
+
+  int16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
+  int16_t numSamples = fifo_count/6;
+  EXPECT_EQ(numSamples, 1);
+
+  data[0] = 0x00;
+  data[1] = 0x06;
+  data[2] = 0x00;
+  data[3] = 0x06;
+  data[4] = 0x00;
+  data[5] = 0x06;
+  EXPECT_CALL(hwMock, readI2CBlock(sensor::mpu9150::FIFO_R_W, NotNull(), 6))
+    .Times(numSamples)
     .WillOnce(SetArrayArgument<1>(data, data+6));
 
   EXPECT_NO_THROW(

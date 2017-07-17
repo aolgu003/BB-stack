@@ -4,7 +4,6 @@ add_compile_options(-std=c++11 -fprofile-arcs)
 
 add_subdirectory(lib)
 
-
 if ( BUILD-BLACKLIB-TESTS )
   include(cmake/DownloadProject.cmake)
   download_project(PROJ     BlackLib

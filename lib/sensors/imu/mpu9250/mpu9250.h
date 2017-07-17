@@ -15,6 +15,10 @@ namespace sensor
     void verifyIMUConnected();
     void calibrationSetup();
     void collectCalibrationData();
+    void calculateGyroBias();
+
+    int numSamples_;
+    uint16_t offsets_[3];
     HALInterface* hwInterface_;
   }; 
 }

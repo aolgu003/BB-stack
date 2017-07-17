@@ -14,6 +14,10 @@ namespace sensor {
     // Calibrate gyro
     calibrationSetup();
     collectCalibrationData();
+    calculateGyroBias();
+    std::cout << offsets_[0] << std::endl;
+    std::cout << offsets_[1] << std::endl;
+    std::cout << offsets_[2] << std::endl;
   }
 
   imuData MPU9250::readData()
@@ -94,7 +98,30 @@ namespace sensor {
     uint8_t data[6] = {0,0,0,0,0,0};
     hwInterface_->readI2CBlock( mpu9150::FIFO_COUNTH, &data[0], 2 );
     int16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
-    int samples = fifo_count/6;
+    numSamples_ = fifo_count/6;
+  }
+
+  void MPU9250::calculateGyroBias()
+  {
+    int16_t x,y,z;
+    int32_t gyro_sum[3] = {0};
+    uint8_t data[6] = {0};
+    for (int i=0; i<numSamples_; i++) {
+      // read data for averaging
+      hwInterface_->readI2CBlock( mpu9150::FIFO_R_W, &data[0], 6 );
+
+      x = (int16_t)(((int16_t)data[0] << 8) | data[1]) ;
+      y = (int16_t)(((int16_t)data[2] << 8) | data[3]) ;
+      z = (int16_t)(((int16_t)data[4] << 8) | data[5]) ;
+      gyro_sum[0]  += (int32_t) x;
+      gyro_sum[1]  += (int32_t) y;
+      gyro_sum[2]  += (int32_t) z;
+    }
+
+    // average out the samples
+    offsets_[0] = (int16_t) (gyro_sum[0]/(int32_t)numSamples_);
+    offsets_[1] = (int16_t) (gyro_sum[1]/(int32_t)numSamples_);
+    offsets_[2] = (int16_t) (gyro_sum[2]/(int32_t)numSamples_);
   }
 }
 
