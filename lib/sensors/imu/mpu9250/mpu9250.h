@@ -5,9 +5,10 @@
 
 namespace sensor
 {
-  class MPU9250: public IMU
+  class MPU9250
   {
   public:
+    MPU9250() {}
     MPU9250( HALInterface* hwSelection );
     imuData readData();
 

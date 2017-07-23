@@ -18,10 +18,14 @@ namespace sensor {
 
     virtual void writeByte (uint8_t registerAddr, uint8_t value)=0;
     virtual void writeBlock (uint8_t registerAddr, uint8_t *writeBuffer, size_t bufferSize)=0;
+
+    virtual void setDeviceAddress(unsigned int newDeviceAddr)=0;
+  private:
+
   };
 
   enum hwInterface {
-    BlackLib,
+    BlackLibInterface,
     mock
   };
 

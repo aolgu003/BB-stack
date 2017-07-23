@@ -146,7 +146,7 @@ namespace sensor
        FIFO_COUNTH      = 0x72,
        FIFO_COUNTL      = 0x73,
        FIFO_R_W         = 0x74,
-       WHO_AM_I_MPU9150 = 0x75, // Should return 0x68
+       WHO_AM_I_MPU9150 = 0x71, // Should return 0x68
 
        MPU9150_ADDRESS_AD0_0 = 0x69,  // Device address when ADO = 1
 

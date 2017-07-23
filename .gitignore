@@ -47,3 +47,4 @@ build/
 build-ahrs/
 build-FOR-BB/
 build-tests/
+build-mpuCalibrationTest-BBB-Default/

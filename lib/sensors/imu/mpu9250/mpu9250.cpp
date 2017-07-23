@@ -6,18 +6,23 @@
 //TODO Write readData function
 namespace sensor {
   MPU9250::MPU9250(HALInterface* hwSelection):
-    IMU::IMU( ),
     hwInterface_(hwSelection)
   {
+    std::cout << "Verifying IMU Connected....." << std::endl;
     verifyIMUConnected();
+    std::cout << "IMU Connected" << std::endl;
 
     // Calibrate gyro
+    std::cout << "Setting up Calibration ....." << std::endl;
     calibrationSetup();
+    std::cout << "Collecting Calibrating Data ....." << std::endl;
     collectCalibrationData();
+    std::cout << "Calculating gyro bias ....." << std::endl;
     calculateGyroBias();
-    std::cout << offsets_[0] << std::endl;
-    std::cout << offsets_[1] << std::endl;
-    std::cout << offsets_[2] << std::endl;
+    std::cout << "Calibration complete....." << std::endl;
+    std::cout << std::dec << offsets_[0] << std::endl;
+    std::cout << std::dec << offsets_[1] << std::endl;
+    std::cout << std::dec << offsets_[2] << std::endl;
   }
 
   imuData MPU9250::readData()
@@ -28,18 +33,26 @@ namespace sensor {
   void MPU9250::verifyIMUConnected()
   {
     try {
-
+      std::cout << "Opening\n";
       hwInterface_->open();
+      std::cout << "Opened\n";
 
       uint8_t IAmMPU;
-      IAmMPU = hwInterface_->readI2CByte(mpu9150::WHO_AM_I_MPU9150); //IMU
-      if (IAmMPU != mpu9150::WHO_AM_I_MPU9150)
+      IAmMPU = hwInterface_->readI2CByte(0x75); //IMU
+      std::cout << "Who is mpu?\n";
+      std::cout << "I am: " << std::hex << (int) IAmMPU << std::endl;
+
+      if (IAmMPU != 0x71)
         throw std::runtime_error("MPU who am I failed");
 
-      uint8_t IAmAK;
-      IAmAK = hwInterface_->readI2CByte(mpu9150::WHO_AM_I_AK8975A); //MAG
+      /*uint8_t IAmAK;
+      hwInterface_->setDeviceAddress(0x76);
+      IAmAK = hwInterface_->readI2CByte(0x00); //MAG
+      std::cout << "Who is AK?\n";
+      std::cout << "I am: " << std::hex << (int) IAmAK << std::endl;
+
       if (IAmAK != mpu9150::WHO_AM_I_AK8975A)
-        throw std::runtime_error("AK who am I failed");
+        throw std::runtime_error("AK who am I failed");*/
     }
     catch (std::runtime_error err) {
       std::cerr << err.what() << std::endl;

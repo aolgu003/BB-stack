@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
 project(BB-Stack)
-add_compile_options(-std=c++11 -fprofile-arcs)
+add_compile_options(-std=c++11)
 
-add_subdirectory(lib)
 
 if ( BUILD-BLACKLIB-TESTS )
   include(cmake/DownloadProject.cmake)
@@ -12,8 +11,9 @@ if ( BUILD-BLACKLIB-TESTS )
     ${UPDATE_DISCONNECTED_IF_AVAILABLE}
     )
 
-  add_subdirectory(${BlackLib_SOURCE_DIR}/v3_0 ${googletest_BINARY_DIR} )
-
+  add_subdirectory( ${BlackLib_SOURCE_DIR}/v3_0 ${googletest_BINARY_DIR} )
+  INCLUDE_DIRECTORIES( ${BlackLib_SOURCE_DIR}/v3_0 )
+  add_subdirectory( lib )
   add_subdirectory( src )
 endif()
 
