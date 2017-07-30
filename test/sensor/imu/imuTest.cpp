@@ -1,4 +1,5 @@
 #include "imuTest.h"
+#include "imu/mpu9250/mpu9250.h"
 
 void imuTest::SetUp(){}
 void imuTest::TearDown(){}

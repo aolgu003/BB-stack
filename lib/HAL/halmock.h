@@ -18,6 +18,8 @@ namespace sensor {
 
     MOCK_METHOD2(writeByte, void(uint8_t registerAddr, uint8_t value));
     MOCK_METHOD3(writeBlock, void(uint8_t registerAddr, uint8_t* writeBuffer, size_t bufferSize));
+
+    MOCK_METHOD1(setDeviceAddress, void(unsigned int newDeviceAddr));
   };
 
 }

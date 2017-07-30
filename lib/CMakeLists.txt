@@ -1,5 +1,4 @@
 add_library( madgwick MadgwickAHRS/MadgwickAHRS.c )
-add_subdirectory( HAL )
 
 if ( BUILD-AHRS OR BUILD-AHRS-UT OR BUILD-UNIT-TESTS )
   INCLUDE_DIRECTORIES("${gmock_SOURCE_DIR}/include")
@@ -13,6 +12,7 @@ if ( BUILD-AHRS OR BUILD-AHRS-UT OR BUILD-UNIT-TESTS )
 endif()
 
 if ( BUILD-BLACKLIB-TESTS )
+  add_subdirectory( HAL )
   add_subdirectory(sensors)
 
   target_include_directories( imu PUBLIC HAL/)

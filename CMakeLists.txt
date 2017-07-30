@@ -56,5 +56,6 @@ if ( BUILD-UNIT-TESTS OR BUILD-AHRS-UT)
   enable_testing()
   include_directories(${GTEST_INCLUDE_DIRS})
 
+  add_subdirectory( lib )
   add_subdirectory( test )
 endif()
