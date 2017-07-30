@@ -16,10 +16,8 @@ int main(int argc, char *argv[])
     while(1)
     {
       imuData = myIMU.readData();
-
-      usleep(1000000);
+      usleep(100000);
     }
-
   } catch (std::runtime_error err){
     std::cerr << err.what() << std::endl;
     std::terminate();

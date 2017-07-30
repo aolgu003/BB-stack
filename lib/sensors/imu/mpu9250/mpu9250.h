@@ -25,6 +25,7 @@ namespace sensor
     float aScale_, gScale_;
     HALInterface* hwInterface_;
 
+    int16_t gyroOffset_[3], accelOffset_[3];
     mpu9150::aScale accelScale_;
     mpu9150::gScale gyroScale_;
   }; 

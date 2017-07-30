@@ -8,8 +8,8 @@
 namespace sensor {
   MPU9250::MPU9250(HALInterface* hwSelection):
     hwInterface_(hwSelection),
-    aScale_(2000.0/32768.0),
-    gScale_(16.0/32768.0)
+    aScale_(2.0/32768.0),
+    gScale_(250.0/32768.0)
   {
     std::cout << ".....Verifying IMU Connected....." << std::endl;
     verifyIMUConnected();
@@ -18,12 +18,15 @@ namespace sensor {
     // Calibrate gyro
     std::cout << ".....Reseting IMU ....." << std::endl;
     resetIMU();
-    std::cout << "\n.....Setting up Calibration ....." << std::endl;
-    calibrationSetup();
-    std::cout << "\n.....Collecting Calibrating Data ....." << std::endl;
-    collectCalibrationData();
+    usleep(2000000);
+
+    std::cout << ".....Initializing IMU ....." << std::endl;
+    initIMU();
+    usleep(2000000);
+
     std::cout << "\n..... Calculating IMU bias ....." << std::endl;
     calculateBias();
+
     std::cout << "\n\n.....Calibration complete....." << std::endl;
     std::cout << "--------- Accel Bias ------------\n";
     std::cout << std::dec << accelBias_[0] << std::endl;
@@ -34,9 +37,9 @@ namespace sensor {
     std::cout << std::dec << gyroBias_[0] << std::endl;
     std::cout << std::dec << gyroBias_[1] << std::endl;
     std::cout << std::dec << gyroBias_[2] << std::endl;
+    std::cout << "---------------" << std::endl;
 
     initIMU();
-    usleep(2000000);
     //initIMU();
   }
 
@@ -55,9 +58,9 @@ namespace sensor {
     std::cout << std::hex << accelOutput[1] << std::endl;
     std::cout << std::hex << accelOutput[2] << std::endl;
 
-    output.a[0] = ((float)accelOutput[0])*aScale_-accelBias_[0];
-    output.a[1] = ((float)accelOutput[1])*aScale_-accelBias_[1];
-    output.a[2] = ((float)accelOutput[2])*aScale_-accelBias_[2];
+    output.a[0] = ((float)(accelOutput[0]-accelOffset_[0]))*aScale_;
+    output.a[1] = ((float)(accelOutput[1]-accelOffset_[1]))*aScale_;
+    output.a[2] = ((float)(accelOutput[2]-accelOffset_[2]))*aScale_;
     std::cout << "---- Processed Data: " << std::endl;
     std::cout << output.a[0] << std::endl;
     std::cout << output.a[1] << std::endl;
@@ -68,13 +71,21 @@ namespace sensor {
     gyroOutput[0] = (int16_t)(((int16_t)rawData[0] << 8) | rawData[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
     gyroOutput[1] = (int16_t)(((int16_t)rawData[2] << 8) | rawData[3]) ;
     gyroOutput[2] = (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
-    output.w[0] = ((float) gyroOutput[0])*gScale_-gyroBias_[0];
-    output.w[1] = ((float) gyroOutput[1])*gScale_-gyroBias_[1];
-    output.w[2] = ((float) gyroOutput[2])*gScale_-gyroBias_[2];
+    output.w[0] = ((float) (gyroOutput[0] - gyroOffset_[0]))*gScale_;
+    output.w[1] = ((float) (gyroOutput[1] - gyroOffset_[1]))*gScale_;
+    output.w[2] = ((float) (gyroOutput[2] - gyroOffset_[2]))*gScale_;
+    std::cout << "---------------" << std::endl;
     std::cout << "GYRO Data \n";
+    std::cout << "---- Raw data: \n";
+    std::cout << std::hex << gyroOutput[0] << std::endl;
+    std::cout << std::hex << gyroOutput[1] << std::endl;
+    std::cout << std::hex << gyroOutput[2] << std::endl;
+
+    std::cout << "---- Processed Data: " << std::endl;
     std::cout << output.w[0] << std::endl;
     std::cout << output.w[1] << std::endl;
     std::cout << output.w[2] << std::endl;
+    std::cout << "---------------" << std::endl;
   }
 
   void MPU9250::verifyIMUConnected()
@@ -140,7 +151,7 @@ namespace sensor {
     // c = c & ~0xE0; // Clear self-test bits [7:5]
      c = c & ~0x02; // Clear Fchoice bits [1:0]
      c = c & ~0x18; // Clear AFS bits [4:3]
-     c = c | (0x03 << 3); // Set full scale range for the gyro
+     c = c | (0x00 << 3); // Set full scale range for the gyro
 
     // c =| 0x00; // Set Fchoice for the gyro to 11 by writing its inverse to bits 1:0 of GYRO_CONFIG
      hwInterface_->writeByte(mpu9150::GYRO_CONFIG, c ); // Write new GYRO_CONFIG value to register
@@ -149,7 +160,7 @@ namespace sensor {
      c = hwInterface_->readI2CByte(mpu9150::ACCEL_CONFIG); // get current ACCEL_CONFIG register value
     // c = c & ~0xE0; // Clear self-test bits [7:5]
      c = c & ~0x18;  // Clear AFS bits [4:3]
-     c = c | (0x03 << 3); // Set full scale range for the gyro
+     c = c | (0x00 << 3); // Set full scale range for the gyro
 
      hwInterface_->writeByte(mpu9150::ACCEL_CONFIG, c); // Write new ACCEL_CONFIG register value
 
@@ -226,62 +237,63 @@ namespace sensor {
 
   void MPU9250::calculateBias()
   {
-    uint8_t data[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+    uint8_t data[6] = {0,0,0,0,0,0};
     int32_t gyro_sum[3] = {0};
     int32_t accel_sum[3] = {0};
     int16_t accel_temp[3] = {0, 0, 0}, gyro_temp[3] = {0, 0, 0};
-
+    numSamples_ = 200;
     for (int i = 0; i < numSamples_; i++)
     {
-        hwInterface_->readI2CBlock( mpu9150::FIFO_R_W, &data[0], 12 );
-        accel_temp[0] = (int16_t) (((int16_t)data[0] << 8) | data[1]  ) ;  // Form signed 16-bit integer for each sample in FIFO
-        std::cout << "Raw Data x: " << std::dec << (int) data[0] << std::endl;
-        std::cout << std::dec << (int) data[1] << std::endl;
-        std::cout << "Accel temp x: " << std::hex << (int16_t) accel_temp[0] << std::endl;
+      hwInterface_->readI2CBlock( mpu9150::ACCEL_XOUT_H, &data[0], 6);  // Read the six raw data registers into data array
+      int16_t accelOutput[3];
+      accelOutput[0] = (int16_t)(((int16_t)data[0] << 8) | data[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+      accelOutput[1] = (int16_t)(((int16_t)data[2] << 8) | data[3]) ;
+      accelOutput[2] = (int16_t)(((int16_t)data[4] << 8) | data[5]) ;
+      accel_sum[0] += (int32_t) accelOutput[0]; // Sum individual signed 16-bit biases to get accumulated signed 32-bit biases
+      accel_sum[1] += (int32_t) accelOutput[1];
+      accel_sum[2] += (int32_t) accelOutput[2];
 
+      hwInterface_->readI2CBlock( mpu9150::GYRO_XOUT_H, &data[0], 6);  // Read the six raw data registers sequentially into data array
+      int16_t gyroOutput[3];
+      gyroOutput[0] = (int16_t)(((int16_t)data[0] << 8) | data[1]) ;  // Turn the MSB and LSB into a signed 16-bit value
+      gyroOutput[1] = (int16_t)(((int16_t)data[2] << 8) | data[3]) ;
+      gyroOutput[2] = (int16_t)(((int16_t)data[4] << 8) | data[5]) ;
+      std::cout << "gyro calib output x:  " << gyroOutput[0] << std::endl;
+      std::cout << "gyro calib output y:  " << gyroOutput[1] << std::endl;
+      std::cout << "gyro calib output z:  " << gyroOutput[2] << std::endl;
 
-        accel_temp[1] = (int16_t) (((int16_t)data[2] << 8) | data[3]  ) ;
-        accel_temp[2] = (int16_t) (((int16_t)data[4] << 8) | data[5]  ) ;
-        gyro_temp[0]  = (int16_t) (((int16_t)data[6] << 8) | data[7]  ) ;
-        gyro_temp[1]  = (int16_t) (((int16_t)data[8] << 8) | data[9]  ) ;
-        gyro_temp[2]  = (int16_t) (((int16_t)data[10] << 8) | data[11]) ;
-
-        accel_sum[0] += (int32_t) accel_temp[0]; // Sum individual signed 16-bit biases to get accumulated signed 32-bit biases
-        accel_sum[1] += (int32_t) accel_temp[1];
-        accel_sum[2] += (int32_t) accel_temp[2];
-
-        gyro_sum[0]  += (int32_t) gyro_temp[0];
-        gyro_sum[1]  += (int32_t) gyro_temp[1];
-        gyro_sum[2]  += (int32_t) gyro_temp[2];
-        std::cout << "--------------------" << std::endl;
+      gyro_sum[0]  += (int32_t) gyroOutput[0];
+      gyro_sum[1]  += (int32_t) gyroOutput[1];
+      gyro_sum[2]  += (int32_t) gyroOutput[2];
+      std::cout << "----------------" << std::endl;
     }
     uint16_t accelOffsets[3], gyroOffsets[3];
 
 
-    std::cout << "Num samples: " << numSamples_ << std::endl;
-    // average out the samples
-    gyroOffsets[0] = (int16_t) (gyro_sum[0]/(int32_t)numSamples_);
-    gyroOffsets[1] = (int16_t) (gyro_sum[1]/(int32_t)numSamples_);
-    gyroOffsets[2] = (int16_t) (gyro_sum[2]/(int32_t)numSamples_);
+    std::cout << "Num samples: " << std::dec << numSamples_ << std::endl;
+    accelOffset_[0] = (int16_t) (accel_sum[0]/(int32_t)numSamples_);
+    accelOffset_[1] = (int16_t) (accel_sum[1]/(int32_t)numSamples_);
+    accelOffset_[2] = (int16_t) (accel_sum[2]/(int32_t)numSamples_);
     std::cout << "Ascale: " << aScale_ << std::endl;
 
-    uint16_t  gyrosensitivity  = 131;   // = 131 LSB/degrees/sec
-    uint16_t  accelsensitivity = 16384;  // = 16384 LSB/g
+    std::cout << "accel offset x: " << std::hex << accelOffsets[0] << std::endl;
+    std::cout << "accel offset y: " << std::hex << accelOffsets[1] << std::endl;
+    std::cout << "accel offset z: " << std::hex << accelOffsets[2] << std::endl;
+    accelBias_[0] = (float) accelOffsets[0]*(float) aScale_;
+    accelBias_[1] = (float) accelOffsets[1]*(float) aScale_;
+    accelBias_[2] = (float) accelOffsets[2]*(float) aScale_;
 
-    gyroBias_[0] = (float) gyroOffsets[0]/(float) gyrosensitivity;
-    gyroBias_[1] = (float) gyroOffsets[1]/(float) gyrosensitivity;
-    gyroBias_[2] = (float) gyroOffsets[2]/(float) gyrosensitivity;
+    // average out the samples
+    gyroOffset_[0] = (int16_t) (gyro_sum[0]/(int32_t)numSamples_);
+    gyroOffset_[1] = (int16_t) (gyro_sum[1]/(int32_t)numSamples_);
+    gyroOffset_[2] = (int16_t) (gyro_sum[2]/(int32_t)numSamples_);
+    std::cout << "gyro offset x: " << std::hex << gyroOffset_[0] << std::endl;
+    std::cout << "gyro offset y: " << std::hex << gyroOffset_[1] << std::endl;
+    std::cout << "gyro offset z: " << std::hex << gyroOffset_[2] << std::endl;
 
-    accelOffsets[0] = (int16_t) (accel_sum[0]/(int32_t)numSamples_);
-    accelOffsets[1] = (int16_t) (accel_sum[1]/(int32_t)numSamples_);
-    accelOffsets[2] = (int16_t) (accel_sum[2]/(int32_t)numSamples_);
-
-    std::cout << "accel offset x: " << accelOffsets[0] << std::endl;
-    std::cout << "accel offset y: " << accelOffsets[1] << std::endl;
-    std::cout << "accel offset z: " << accelOffsets[2] << std::endl;
-    accelBias_[0] = (float) accelOffsets[0]/(float) accelsensitivity;
-    accelBias_[1] = (float) accelOffsets[1]/(float) accelsensitivity;
-    accelBias_[2] = (float) accelOffsets[2]/(float) accelsensitivity;
+    gyroBias_[0] = (float) gyroOffsets[0]*(float) gScale_;
+    gyroBias_[1] = (float) gyroOffsets[1]*(float) gScale_;
+    gyroBias_[2] = (float) gyroOffsets[2]*(float) gScale_;
   }
 }
 

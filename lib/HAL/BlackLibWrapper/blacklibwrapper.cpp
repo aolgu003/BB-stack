@@ -27,7 +27,6 @@ uint8_t sensor::BlackLibWrapper::readI2CByte(uint8_t registerAddr)
   uint8_t registerValue;
   if (myI2C.isOpen())
   {
-    std::cout << "I2C is open reading byte...\n";
     registerValue = myI2C.readByte(registerAddr);
   }
   else
