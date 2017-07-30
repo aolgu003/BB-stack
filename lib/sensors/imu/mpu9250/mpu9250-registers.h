@@ -55,12 +55,9 @@ namespace sensor
        CONFIG          = 0x1A,
        GYRO_CONFIG     = 0x1B,
        ACCEL_CONFIG    = 0x1C,
-       FF_THR          = 0x1D,  // Free-fall
-       FF_DUR          = 0x1E,  // Free-fall
-       MOT_THR         = 0x1F,  // Motion detection threshold bits [7:0]
-       MOT_DUR         = 0x20,  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
-       ZMOT_THR        = 0x21,  // Zero-motion detection threshold bits [7:0]
-       ZRMOT_DUR       = 0x22,  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
+       ACCEL_CONFIG2   = 0x1D,  // Free-fall
+       LP_ACCEL_ODR    = 0x1E,  // Free-fall
+       WOM_THR         = 0x1F,  // Motion detection threshold bits [7:0]
        FIFO_EN         = 0x23,
        FIFO_EN_GYROX   = 0x40,
        FIFO_EN_GYROY   = 0x20,
@@ -152,6 +149,23 @@ namespace sensor
 
        MPU9150_ADDRESS_AD0_1 = 0x68  // Device address when ADO = 0
     };
+
+    struct gScale
+    {
+      float GFS_250DPS = 250.0/32768.0;
+      float GFS_500DPS = 500.0/32768.0;
+      float GFS_1000DPS = 1000.0/32768.0;
+      float GFS_2000DPS = 2000.0/32768.0;
+    };
+
+    struct aScale
+    {
+      float AFS_2G = 2.0/32768.0;
+      float AFS_4G = 4.0/32768.0;
+      float AFS_8G = 8.0/32768.0;
+      float AFS_16G = 16.0/32768.0;
+    };
+
   }
 }
 

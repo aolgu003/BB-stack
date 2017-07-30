@@ -23,10 +23,6 @@ void sensor::BlackLibWrapper::close()
 
 uint8_t sensor::BlackLibWrapper::readI2CByte(uint8_t registerAddr)
 {
-  std::cout << "-------- Reading Byte -----------" << std::endl;
-  std::cout << "Reading register: " << std::hex << (int) registerAddr << std::endl;
-  std::cout << "My device address: " << std::hex << myI2C.getDeviceAddress() << std::endl;
-  std::cout << "My Port path: " << myI2C.getPortName() << std::endl;
 
   uint8_t registerValue;
   if (myI2C.isOpen())
@@ -39,20 +35,19 @@ uint8_t sensor::BlackLibWrapper::readI2CByte(uint8_t registerAddr)
     throw std::runtime_error("i2c is not open");
   }
 
-  if ( registerValue == 0x00 )
-    throw std::runtime_error("Error reading from i2c port\n");
-
-  std::cout << "---------------------------------" << std::endl;
+  //if ( registerValue == 0x00 )
+  //  throw std::runtime_error("Error reading from i2c port\n");
 
   return registerValue;
 }
 
 void sensor::BlackLibWrapper::readI2CBlock(uint8_t registerAddr, uint8_t *readBuffer, size_t bufferSize)
 {
-  std::cout << "-------- Reading Byte -----------" << std::endl;
-  std::cout << "Reading register: " << std::hex << (int) registerAddr << std::endl;
-  std::cout << "My device address: " << std::hex << myI2C.getDeviceAddress() << std::endl;
-  std::cout << "My Port path: " << myI2C.getPortName() << std::endl;  uint8_t blockSize;
+  //std::cout << "-------- Reading Byte -----------" << std::endl;
+  //std::cout << "Reading register: " << std::hex << (int) registerAddr << std::endl;
+  //std::cout << "My device address: " << std::hex << myI2C.getDeviceAddress() << std::endl;
+  //std::cout << "My Port path: " << myI2C.getPortName() << std::endl;
+  uint8_t blockSize;
   if (myI2C.isOpen())
     blockSize = myI2C.readBlock(registerAddr, readBuffer, bufferSize);
   else
@@ -60,17 +55,12 @@ void sensor::BlackLibWrapper::readI2CBlock(uint8_t registerAddr, uint8_t *readBu
 
   if ( blockSize == 0x00 )
     throw std::runtime_error("Error reading block from i2c port\n");
-
-  std::cout << "---------------------------------" << std::endl;
 }
 
 void sensor::BlackLibWrapper::writeByte(uint8_t registerAddr, uint8_t value)
 {
 
   bool writeStatus;
-  std::cout << "-------- Writting Byte ---------" << std::endl;
-  std::cout << "Writting value: " << value << std::endl;
-  std::cout << "Writting to register: " << registerAddr << std::endl;
   if (myI2C.isOpen())
   {
     writeStatus = myI2C.writeByte(registerAddr, value);
@@ -82,7 +72,6 @@ void sensor::BlackLibWrapper::writeByte(uint8_t registerAddr, uint8_t value)
 
   if ( !writeStatus )
     throw std::runtime_error("Error writting block from i2c port\n");
-  std::cout << "------------------------------" << std::endl;
 }
 
 void sensor::BlackLibWrapper::writeBlock(uint8_t registerAddr, uint8_t *writeBuffer, size_t bufferSize)

@@ -14,13 +14,19 @@ namespace sensor
 
   private:
     void verifyIMUConnected();
+    void resetIMU();
+    void initIMU();
     void calibrationSetup();
     void collectCalibrationData();
-    void calculateGyroBias();
+    void calculateBias();
 
     int numSamples_;
-    uint16_t offsets_[3];
+    float accelBias_[3], gyroBias_[3];
+    float aScale_, gScale_;
     HALInterface* hwInterface_;
+
+    mpu9150::aScale accelScale_;
+    mpu9150::gScale gyroScale_;
   }; 
 }
 
