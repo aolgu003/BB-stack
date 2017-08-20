@@ -26,7 +26,7 @@ namespace sensor
      ahrsData readData()=0;
 
   private:
-    IMU myIMU;
+    IMU myIMU_;
   };
 }
 
