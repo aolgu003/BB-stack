@@ -22,7 +22,9 @@ branches:
   only:
   - master
 
-script: ./setup_env.sh
+before_script: 
+  - ./setup_env.sh
+
 script: ./run_build.sh
 
 after_success:
