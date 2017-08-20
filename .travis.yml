@@ -19,13 +19,11 @@ addons:
             - g++-arm-linux-gnueabihf
             - libc6-dev-armhf-cross
             - qemu-user-static
+            - qemu-user
 
 branches:
   only:
   - master
-
-before_script: 
-  - apt install -y qemu-user
 
 script: ./run_build.sh
 
