@@ -1,6 +1,6 @@
 language: cpp
 sudo: false
-dist: trusty
+dist: xenial
 compiler:
 - g++
 os:
@@ -17,13 +17,15 @@ addons:
             - lcov
             - gcc-arm-linux-gnueabihf
             - g++-arm-linux-gnueabihf
+            - libc6-dev-armhf-cross
+            - qemu-user-static
 
 branches:
   only:
   - master
 
 before_script: 
-  - ./setup_env.sh
+  - apt install -y qemu-user
 
 script: ./run_build.sh
 
