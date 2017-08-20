@@ -13,7 +13,6 @@ addons:
     apt:
         sources:
             - ubuntu-toolchain-r-test
-            - libeigen3-dev
         packages:
             - lcov
             - gcc-arm-linux-gnueabihf
@@ -23,7 +22,9 @@ branches:
   only:
   - master
 
-script: ./run_build.sh
+script: 
+  -./setup_env.sh
+  -./run_build.sh
 
 after_success:
     # Creating report
