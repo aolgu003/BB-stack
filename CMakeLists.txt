@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.0)
+set(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabihf-g++")
+set( CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabihf-gcc" )
+
 project(BB-Stack)
 add_compile_options(-std=c++11)
 
@@ -24,7 +27,7 @@ if (CMAKE_VERSION VERSION_LESS 2.8.11)
     include_directories("${gtest_SOURCE_DIR}/include"
                         "${gmock_SOURCE_DIR}/include")
 endif()
-
+include_directories(${GTEST_INCLUDE_DIRS})
 
 download_project(PROJ     BlackLib
   GIT_REPOSITORY          https://github.com/aolgu003/BlackLib.git
@@ -32,7 +35,7 @@ download_project(PROJ     BlackLib
   ${UPDATE_DISCONNECTED_IF_AVAILABLE}
   )
 
-add_subdirectory( ${BlackLib_SOURCE_DIR}/v3_0 ${googletest_BINARY_DIR} )
+add_subdirectory( ${BlackLib_SOURCE_DIR}/v3_0 ${BlackLib_BINARY_DIR}/v3_0)
 INCLUDE_DIRECTORIES( ${BlackLib_SOURCE_DIR}/v3_0 )
 # -------------------------------------------------------------------------------------
 
@@ -50,7 +53,7 @@ else()
 endif()
 
 enable_testing()
-include_directories(${GTEST_INCLUDE_DIRS})
 
 add_subdirectory( lib )
+add_subdirectory( src )
 add_subdirectory( test )
