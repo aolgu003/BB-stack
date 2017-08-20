@@ -1,3 +1,1 @@
-if ( BUILD-BLACKLIB-TEST )
-  add_subdirectory(BlackLibWrapper)
-endif()
+add_subdirectory(BlackLibWrapper)

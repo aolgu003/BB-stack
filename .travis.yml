@@ -16,6 +16,8 @@ addons:
             - libeigen3-dev
         packages:
             - lcov
+            - gcc-arm-linux-gnueabihf
+            - g++-arm-linux-gnueabihf
 
 branches:
   only:

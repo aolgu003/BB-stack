@@ -7,14 +7,14 @@ namespace sensor
 template<class IMU>
 AHRS<IMU>::AHRS(HALInterface *hwInterface)
 {
-  myIMU = IMU(hwInterface);
+  myIMU_ = IMU(hwInterface);
 }
 
 template<class IMU>
 ahrsData AHRS<IMU>::readData()
 {
   sensor::imuData imuOutput;
-  imuOutput = myIMU.readData();
+  imuOutput = myIMU_.readData();
   MadgwickAHRSupdateIMU(imuOutput.w[0], imuOutput.w[1], imuOutput.w[2], imuOutput.a[0], imuOutput.a[1], imuOutput.a[2]);
   sensor::ahrsData ahrsOutput;
   ahrsOutput.a = imuOutput.a;
@@ -24,6 +24,7 @@ ahrsData AHRS<IMU>::readData()
   ahrsOutput.q[2] = q2;
   ahrsOutput.q[3] = q3;
 
+  return ahrsOutput;
 }
 
 }
