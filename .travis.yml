@@ -15,6 +15,7 @@ addons:
             - ubuntu-toolchain-r-test
         packages:
             - lcov
+            - cmake
             - gcc-arm-linux-gnueabihf
             - g++-arm-linux-gnueabihf
             - libc6-dev-armhf-cross
