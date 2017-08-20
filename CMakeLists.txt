@@ -3,6 +3,7 @@ set(CMAKE_CXX_COMPILER "/usr/bin/arm-linux-gnueabihf-g++")
 set( CMAKE_C_COMPILER "/usr/bin/arm-linux-gnueabihf-gcc" )
 
 project(BB-Stack)
+
 add_compile_options(-std=c++11)
 
 include(cmake/DownloadProject.cmake)

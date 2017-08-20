@@ -14,7 +14,7 @@ allert () { echo -e "${RED}$1${NC}"; }
 # Building project
 mkdir -p build
 cd build
-cmake .. -DBUILD-UNIT-TESTS=BOOL:ON -DCMAKE_BUILD_TYPE=Debug
+cmake ..
 make all
 # Checks if last comand didn't output 0
 # $? checks what last command outputed
@@ -27,8 +27,9 @@ if [ $? -ne 0 ]; then
 fi
 
 showinfo "Running tests ..."
-make all
-ctest
+#ctest
+cd ..
+./run_unitTests.sh
 if [ $? -ne 0 ]; then
     error "Error: there are failed tests!"
     exit 4

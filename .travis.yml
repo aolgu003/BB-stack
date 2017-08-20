@@ -13,11 +13,14 @@ addons:
     apt:
         sources:
             - ubuntu-toolchain-r-test
-            - libeigen3-dev
         packages:
             - lcov
+            - cmake
             - gcc-arm-linux-gnueabihf
             - g++-arm-linux-gnueabihf
+            - libc6-dev-armhf-cross
+            - qemu-user-static
+            - qemu-user
 
 branches:
   only:
