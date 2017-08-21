@@ -40,7 +40,6 @@ namespace sensor {
     std::cout << "---------------" << std::endl;
 
     initIMU();
-    //initIMU();
   }
 
   imuData MPU9250::readData()
@@ -180,59 +179,6 @@ namespace sensor {
      // can join the I2C bus and all can be controlled by the Arduino as master
       hwInterface_->writeByte(mpu9150::INT_PIN_CFG, 0x22);
       hwInterface_->writeByte(mpu9150::INT_ENABLE, 0x01);  // Enable data ready (bit 0) interrupt
-  }
-
-
-  void MPU9250::calibrationSetup()
-  {
-    try {
-      hwInterface_->writeByte(mpu9150::PWR_MGMT_1, 0x01);
-      hwInterface_->writeByte(mpu9150::PWR_MGMT_2, 0x00);
-
-      //Wait for PLL to steady
-      usleep(200000);
-
-      hwInterface_->writeByte(mpu9150::INT_ENABLE, 0x00);  // Disable all interrupts
-      hwInterface_->writeByte(mpu9150::FIFO_EN, 0x00);     // Disable FIFO
-      hwInterface_->writeByte(mpu9150::PWR_MGMT_1, 0x00);  // Turn on internal clock source
-      hwInterface_->writeByte(mpu9150::I2C_MST_CTRL, 0x00);// Disable I2C master
-      hwInterface_->writeByte(mpu9150::USER_CTRL, 0x00);   // Disable FIFO and I2C master
-      hwInterface_->writeByte(mpu9150::USER_CTRL, 0x0C);   // Reset FIFO and DMP
-      usleep(15000);
-
-      // Configure MPU9250 gyro and accelerometer for bias calculation
-      hwInterface_->writeByte(mpu9150::CONFIG, 0x01);      // Set low-pass filter to 188 Hz
-      hwInterface_->writeByte(mpu9150::SMPLRT_DIV, 0x00);  // Set sample rate to 200hz
-      // Set gyro full-scale to 250 degrees per second, maximum sensitivity
-      hwInterface_->writeByte(mpu9150::GYRO_CONFIG, 0x00);
-      // Set accelerometer full-scale to 2 g, maximum sensitivity
-      hwInterface_->writeByte(mpu9150::ACCEL_CONFIG, 0x00);
-
-    } catch (std::runtime_error err) {
-      std::cerr << err.what() << std::endl;
-      throw err;
-    }
-  }
-
-  void MPU9250::collectCalibrationData()
-  {
-    // Configure FIFO to capture gyro data for bias calculation
-    hwInterface_->writeByte(mpu9150::USER_CTRL, 0x40);   // Enable FIFO
-
-    // Enable gyro sensors for FIFO (max size 512 bytes in MPU-9250)
-    uint8_t c = mpu9150::FIFO_EN_GYROX|mpu9150::FIFO_EN_GYROY|mpu9150::FIFO_EN_GYROZ | mpu9150::FIFO_EN_ACCEL;
-    hwInterface_->writeByte(mpu9150::FIFO_EN, c);
-    // 6 bytes per sample. 200hz. wait 0.4 seconds
-    usleep(400000);
-
-    // At end of sample accumulation, turn off FIFO sensor read
-    hwInterface_->writeByte(mpu9150::FIFO_EN, 0x00);
-
-    // read FIFO sample count and log number of samples
-    uint8_t data[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
-    hwInterface_->readI2CBlock( mpu9150::FIFO_COUNTH, &data[0], 2 );
-    int16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
-    numSamples_ = fifo_count/12;
   }
 
   void MPU9250::calculateBias()
