@@ -53,9 +53,9 @@ namespace sensor {
     accelOutput[2] = (int16_t)(((int16_t)rawData[4] << 8) | rawData[5]) ;
     std::cout << "Acell Data \n";
     std::cout << "---- Raw data: \n";
-    std::cout << std::hex << accelOutput[0] << std::endl;
-    std::cout << std::hex << accelOutput[1] << std::endl;
-    std::cout << std::hex << accelOutput[2] << std::endl;
+    std::cout << (float) accelOutput[0] << std::endl;
+    std::cout << (float) accelOutput[1] << std::endl;
+    std::cout << (float) accelOutput[2] << std::endl;
 
     output.a[0] = ((float)(accelOutput[0]-accelOffset_[0]))*aScale_;
     output.a[1] = ((float)(accelOutput[1]-accelOffset_[1]))*aScale_;
@@ -85,6 +85,8 @@ namespace sensor {
     std::cout << output.w[1] << std::endl;
     std::cout << output.w[2] << std::endl;
     std::cout << "---------------" << std::endl;
+
+    return output;
   }
 
   void MPU9250::verifyIMUConnected()
@@ -198,6 +200,9 @@ namespace sensor {
       accel_sum[0] += (int32_t) accelOutput[0]; // Sum individual signed 16-bit biases to get accumulated signed 32-bit biases
       accel_sum[1] += (int32_t) accelOutput[1];
       accel_sum[2] += (int32_t) accelOutput[2];
+      std::cout << "gyro calib output x:  " << accelOutput[0] << std::endl;
+      std::cout << "gyro calib output y:  " << accelOutput[1] << std::endl;
+      std::cout << "gyro calib output z:  " << accelOutput[2] << std::endl;
 
       hwInterface_->readI2CBlock( mpu9150::GYRO_XOUT_H, &data[0], 6);  // Read the six raw data registers sequentially into data array
       int16_t gyroOutput[3];
@@ -233,6 +238,9 @@ namespace sensor {
     gyroOffset_[0] = (int16_t) (gyro_sum[0]/(int32_t)numSamples_);
     gyroOffset_[1] = (int16_t) (gyro_sum[1]/(int32_t)numSamples_);
     gyroOffset_[2] = (int16_t) (gyro_sum[2]/(int32_t)numSamples_);
+    std::cout << "Gscale: " << gScale_ << std::endl;
+
+
     std::cout << "gyro offset x: " << std::hex << gyroOffset_[0] << std::endl;
     std::cout << "gyro offset y: " << std::hex << gyroOffset_[1] << std::endl;
     std::cout << "gyro offset z: " << std::hex << gyroOffset_[2] << std::endl;
