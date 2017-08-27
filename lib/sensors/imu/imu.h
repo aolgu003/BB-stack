@@ -11,6 +11,7 @@ extern "C" {
 #include "MadgwickAHRS.h"
 }
 
+#define PI 3.14159
 namespace sensor
 {
   /**
@@ -23,7 +24,9 @@ namespace sensor
   public:
     AHRS(int i2cdevice, unsigned int i2caddress):
       myIMU_(i2cdevice, i2caddress)
-    {}
+    {
+        std::cout << "AHRS constructor" << std::endl;
+    }
 
   public:
     /**
@@ -52,7 +55,11 @@ namespace sensor
        float Roll = atan2(2.0*(q0*q1 + q2*q3), 1 - 2 * (q1*q1 + q2*q2));
        float Pitch = asin(2.0*(q0*q2 - q3*q1));
        float Yaw = atan2(2.0*(q0*q3 + q1*q2), 1 - 2 * (q1*q1 + q2*q2));
-
+       std::cout << "-------- AHRS OUTPUT -------------" << std::endl;
+       std::cout << "Yaw: " << Yaw*(180/PI)
+                 << " , Pitch: " << Pitch*(180/PI)
+                 << " , Roll: " << Roll*(180/PI)
+                 << std::endl;
        return output;
      }
 

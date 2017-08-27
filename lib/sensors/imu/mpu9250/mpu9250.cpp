@@ -11,9 +11,10 @@ MPU9250::MPU9250(int i2cdevice, unsigned int i2caddress):
   gScale_(250.0/32768.0)
 
 {
-  HALInterface* myHALInterface =
+    std::cout << "Creating HAL interface" << std::endl;
+  hwInterface_ =
       HALFactory::makeHALInstance(hwInterface::BlackLibInterface, i2cdevice, i2caddress );
-
+  std::cout << "Starting up IMU" << std::endl;
   startupIMU();
 }
 
