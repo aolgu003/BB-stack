@@ -20,6 +20,8 @@ namespace sensor {
     virtual void writeBlock (uint8_t registerAddr, uint8_t *writeBuffer, size_t bufferSize)=0;
 
     virtual void setDeviceAddress(unsigned int newDeviceAddr)=0;
+
+
   private:
 
   };

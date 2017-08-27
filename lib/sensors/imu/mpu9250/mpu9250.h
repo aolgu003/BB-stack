@@ -1,6 +1,7 @@
 #ifndef MPU9150_H
 #define MPU9150_H
-#include "imu/imu.h"
+#include "sensor-messages.h"
+#include "halfactory.h"
 #include "mpu9250-registers.h"
 
 namespace sensor
@@ -8,11 +9,13 @@ namespace sensor
   class MPU9250
   {
   public:
-    MPU9250() {}
+    MPU9250(){}
+    MPU9250( int i2cdevice, unsigned int i2caddress );
     MPU9250( HALInterface* hwSelection );
     imuData readData();
 
   private:
+    void startupIMU();
     void verifyIMUConnected();
     void resetIMU();
     void initIMU();

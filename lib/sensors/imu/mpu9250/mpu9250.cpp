@@ -6,40 +6,23 @@
 //TODO Write calibration parameter loading
 //TODO Write readData function
 namespace sensor {
-  MPU9250::MPU9250(HALInterface* hwSelection):
+MPU9250::MPU9250(int i2cdevice, unsigned int i2caddress):
+  aScale_(2.0/32768.0),
+  gScale_(250.0/32768.0)
+
+{
+  HALInterface* myHALInterface =
+      HALFactory::makeHALInstance(hwInterface::BlackLibInterface, i2cdevice, i2caddress );
+
+  startupIMU();
+}
+
+MPU9250::MPU9250(HALInterface* hwSelection):
     hwInterface_(hwSelection),
     aScale_(2.0/32768.0),
     gScale_(250.0/32768.0)
   {
-    std::cout << ".....Verifying IMU Connected....." << std::endl;
-    verifyIMUConnected();
-    std::cout << ".....IMU Connected.....\n" << std::endl;
-
-    // Calibrate gyro
-    std::cout << ".....Reseting IMU ....." << std::endl;
-    resetIMU();
-    usleep(2000000);
-
-    std::cout << ".....Initializing IMU ....." << std::endl;
-    initIMU();
-    usleep(2000000);
-
-    std::cout << "\n..... Calculating IMU bias ....." << std::endl;
-    calculateBias();
-
-    std::cout << "\n\n.....Calibration complete....." << std::endl;
-    std::cout << "--------- Accel Bias ------------\n";
-    std::cout << std::dec << accelBias_[0] << std::endl;
-    std::cout << std::dec << accelBias_[1] << std::endl;
-    std::cout << std::dec << accelBias_[2] << std::endl;
-
-    std::cout << "--------- gyro Bias ------------\n";
-    std::cout << std::dec << gyroBias_[0] << std::endl;
-    std::cout << std::dec << gyroBias_[1] << std::endl;
-    std::cout << std::dec << gyroBias_[2] << std::endl;
-    std::cout << "---------------" << std::endl;
-
-    initIMU();
+    startupIMU();
   }
 
   imuData MPU9250::readData()
@@ -87,6 +70,39 @@ namespace sensor {
     std::cout << "---------------" << std::endl;
 
     return output;
+  }
+
+  void MPU9250::startupIMU()
+  {
+    std::cout << ".....Verifying IMU Connected....." << std::endl;
+    verifyIMUConnected();
+    std::cout << ".....IMU Connected.....\n" << std::endl;
+
+    // Calibrate gyro
+    std::cout << ".....Reseting IMU ....." << std::endl;
+    resetIMU();
+    usleep(2000000);
+
+    std::cout << ".....Initializing IMU ....." << std::endl;
+    initIMU();
+    usleep(2000000);
+
+    std::cout << "\n..... Calculating IMU bias ....." << std::endl;
+    calculateBias();
+
+    std::cout << "\n\n.....Calibration complete....." << std::endl;
+    std::cout << "--------- Accel Bias ------------\n";
+    std::cout << std::dec << accelBias_[0] << std::endl;
+    std::cout << std::dec << accelBias_[1] << std::endl;
+    std::cout << std::dec << accelBias_[2] << std::endl;
+
+    std::cout << "--------- gyro Bias ------------\n";
+    std::cout << std::dec << gyroBias_[0] << std::endl;
+    std::cout << std::dec << gyroBias_[1] << std::endl;
+    std::cout << std::dec << gyroBias_[2] << std::endl;
+    std::cout << "---------------" << std::endl;
+
+    initIMU();
   }
 
   void MPU9250::verifyIMUConnected()
