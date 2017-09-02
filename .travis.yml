@@ -8,19 +8,12 @@ os:
 
 before_install:
   - pip install --user codecov
+  - ./setup_env.sh
 
 addons:
     apt:
         sources:
             - ubuntu-toolchain-r-test
-        packages:
-            - lcov
-            - cmake
-            - gcc-arm-linux-gnueabihf
-            - g++-arm-linux-gnueabihf
-            - libc6-dev-armhf-cross
-            - qemu-user-static
-            - qemu-user
 
 branches:
   only:
