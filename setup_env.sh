@@ -20,6 +20,7 @@ cd zeromq-4.2.2/
 ./configure --host=arm-linux-gnueabihf
 make
 make install
+cd ..
 
 wget https://github.com/zeromq/cppzmq/archive/v4.2.2.tar.gz
 tar -xf v4.2.2.tar.gz
@@ -29,3 +30,4 @@ cd build/
 cmake .. -DCMAKE_CXX_COMPILER="/usr/bin/arm-linux-gnueabihf-g++" -DCMAKE_C_COMPILER="/usr/bin/arm-linux-gnueabihf-gcc"
 make
 make install
+cd ..
