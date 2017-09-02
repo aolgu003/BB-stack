@@ -38,6 +38,12 @@ download_project(PROJ     BlackLib
 
 add_subdirectory( ${BlackLib_SOURCE_DIR}/v3_0 ${BlackLib_BINARY_DIR}/v3_0)
 INCLUDE_DIRECTORIES( ${BlackLib_SOURCE_DIR}/v3_0 )
+
+find_package(cppzmq)
+if(cppzmq_FOUND)
+    include_directories(${cppzmq_INCLUDE_DIR})
+endif()
+
 # -------------------------------------------------------------------------------------
 
 include(cmake/CodeCoverage.cmake)
