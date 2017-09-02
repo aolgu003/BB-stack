@@ -8,7 +8,7 @@ os:
 
 before_install:
   - pip install --user codecov
-  - ./setup_env.sh
+  - sudo ./setup_env.sh
 
 addons:
     apt:
