@@ -23,6 +23,13 @@ In order to expidite the development environment setup I have made a script that
 
 Simply running:```./setup_env.sh``` In the terminal will automatically install the afformentioned packages.
 
+### Docker Setup (RECOMMENED)
+Run to build an image with the dev environment:
+docker build -t bb-stack .
+
+Run this to start to start a container with a BB-Stack directory mounted in it:
+docker run -it -v /home/andrew/Projects/BB-stack/:/BB-Stack --rm --name=bb-dev bb-stack:latest bash
+
 ### Vagrant Setup (RECOMMENED)
 If you would like to development from a non-Ubuntu machine or you simply don't want any of the packages listed above to polute your machine you can use Vagrant to automatically set up a VM for you. Assuming you have virtual box installed: https://www.virtualbox.org/wiki/Downloads
 
