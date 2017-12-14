@@ -14,6 +14,7 @@ apt install -y qemu-user
 
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$LCM_INSTALL_DIR/pkgconfig
 
+apt-get install -y wget
 wget https://github.com/zeromq/libzmq/releases/download/v4.2.2/zeromq-4.2.2.tar.gz
 tar -xf zeromq-4.2.2.tar.gz
 cd zeromq-4.2.2/
